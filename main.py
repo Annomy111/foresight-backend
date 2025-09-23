@@ -84,6 +84,40 @@ async def get_available_models():
         "default_iterations": settings.get('ITERATIONS_PER_MODEL', 5)
     }
 
+# Root endpoint with API information
+@app.get("/")
+async def root():
+    """Root endpoint - API information and available endpoints"""
+    enabled_models = settings.get('ENABLED_MODELS', '').split(',')
+    return {
+        "message": "Foresight Analyzer API",
+        "description": "AI-powered probabilistic forecasting using ensemble methods",
+        "version": "2.0.0",
+        "status": "online",
+        "timestamp": datetime.now().isoformat(),
+        "endpoints": {
+            "health": "/health",
+            "models": "/api/models",
+            "forecast": "/api/forecast",
+            "simple_forecast": "/forecast",
+            "docs": "/docs",
+            "redoc": "/redoc"
+        },
+        "capabilities": {
+            "enabled_models": len([m.strip() for m in enabled_models if m.strip()]),
+            "ensemble_forecasting": True,
+            "excel_export": True,
+            "background_processing": True
+        }
+    }
+
+# Docs redirect for convenience
+@app.get("/docs-redirect")
+async def docs_redirect():
+    """Redirect to FastAPI docs"""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/docs")
+
 # Health check endpoint
 @app.get("/health")
 @app.get("/api/health")
@@ -404,8 +438,40 @@ async def create_forecast_simple(request: ForecastRequest):
 @app.on_event("startup")
 async def startup_event():
     """Initialize the application"""
-    logger.info("Foresight Analyzer API starting up...")
-    logger.info(f"Enabled models: {settings.get('ENABLED_MODELS', '')}")
+    logger.info("🚀 Foresight Analyzer API starting up...")
+    logger.info(f"📊 Enabled models: {settings.get('ENABLED_MODELS', '')}")
+    logger.info(f"🔧 Iterations per model: {settings.get('ITERATIONS_PER_MODEL', 5)}")
+    logger.info(f"⚡ Concurrent requests: {settings.get('CONCURRENT_REQUESTS', 3)}")
+    logger.info(f"🕐 Request timeout: {settings.get('REQUEST_TIMEOUT', 120)}s")
+
+    # Test OpenRouter API connectivity
+    try:
+        client = OpenRouterClient()
+        logger.info("✅ OpenRouter client initialized successfully")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize OpenRouter client: {e}")
+
+    logger.info("🎯 API endpoints available:")
+    logger.info("   📍 Root: /")
+    logger.info("   💚 Health: /health")
+    logger.info("   🤖 Models: /api/models")
+    logger.info("   🔮 Forecast: /api/forecast")
+    logger.info("   📚 Docs: /docs")
+
+# Shutdown event
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Clean up on shutdown"""
+    logger.info("🛑 Foresight Analyzer API shutting down...")
+    logger.info("🧹 Cleaning up running forecasts...")
+
+    # Cancel any running forecasts
+    for forecast_id in list(running_forecasts.keys()):
+        if running_forecasts[forecast_id]["status"] == "running":
+            running_forecasts[forecast_id]["status"] = "cancelled"
+            logger.info(f"   ❌ Cancelled forecast: {forecast_id}")
+
+    logger.info("✅ Shutdown complete")
 
 if __name__ == "__main__":
     import uvicorn
