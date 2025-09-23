@@ -102,3 +102,19 @@ def get_settings() -> Settings:
     if settings is None:
         settings = Settings.load_from_env()
     return settings
+
+def load_settings() -> dict:
+    """Load settings as dictionary (backward compatibility)"""
+    settings_obj = get_settings()
+    return {
+        'OPENROUTER_API_KEY': settings_obj.api.api_key,
+        'OPENROUTER_BASE_URL': settings_obj.api.base_url,
+        'ENABLED_MODELS': ','.join(settings_obj.models.enabled_models),
+        'ITERATIONS_PER_MODEL': str(settings_obj.models.iterations_per_model),
+        'CONCURRENT_REQUESTS': str(settings_obj.models.concurrent_requests),
+        'REQUEST_TIMEOUT': str(settings_obj.api.timeout),
+        'RETRY_ATTEMPTS': str(settings_obj.api.retry_attempts),
+        'RETRY_DELAY': str(settings_obj.api.retry_delay),
+        'OUTPUT_DIR': str(settings_obj.output.output_dir),
+        'SAVE_RAW_RESPONSES': str(settings_obj.output.save_raw_responses).lower()
+    }
