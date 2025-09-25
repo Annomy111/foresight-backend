@@ -11,7 +11,7 @@ services:
       - key: PYTHON_VERSION
         value: 3.11.0
       - key: OPENROUTER_API_KEY
-        value: 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
+        value: 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
       - key: OPENROUTER_BASE_URL
         value: https://openrouter.ai/api/v1
       - key: ENABLED_MODELS
