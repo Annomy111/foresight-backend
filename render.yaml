@@ -11,11 +11,11 @@ services:
       - key: PYTHON_VERSION
         value: 3.11.0
       - key: OPENROUTER_API_KEY
-        value: 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
+        value: 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
       - key: OPENROUTER_BASE_URL
         value: https://openrouter.ai/api/v1
       - key: ENABLED_MODELS
-        value: x-ai/grok-4-fast:free,deepseek/deepseek-r1-distill-llama-70b:free,qwen/qwen-2.5-72b-instruct:free,qwen/qwen-2-vl-72b-instruct:free,google/gemini-2.0-flash-exp:free,google/gemma-2-9b-it:free,mistralai/mistral-7b-instruct:free,meta-llama/llama-3.2-3b-instruct:free
+        value: x-ai/grok-4-fast:free,google/gemini-2.0-flash-exp:free,qwen/qwen-2.5-72b-instruct:free
       - key: ITERATIONS_PER_MODEL
         value: "5"
       - key: CONCURRENT_REQUESTS
@@ -23,7 +23,11 @@ services:
       - key: REQUEST_TIMEOUT
         value: "120"
       - key: RATE_LIMIT_DELAY
+        value: "10"
+      - key: MAX_RETRIES_FREE
         value: "5"
+      - key: BACKOFF_MULTIPLIER
+        value: "2"
     # Health check endpoint to keep service alive
     healthCheckPath: /health
     autoDeploy: true # Auto deploy on git push

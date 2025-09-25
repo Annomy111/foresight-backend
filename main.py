@@ -36,7 +36,7 @@ from utils.logging import setup_logger
 app = FastAPI(
     title="Foresight Analyzer API",
     description="AI-powered probabilistic forecasting using ensemble methods",
-    version="2.0.3"  # FINAL VALID API key - WORKS!
+    version="2.1.0"  # STABLE: Chatbot I key + rate limiting
 )
 
 # Configure CORS
@@ -92,7 +92,7 @@ async def root():
     return {
         "message": "Foresight Analyzer API",
         "description": "AI-powered probabilistic forecasting using ensemble methods",
-        "version": "2.0.3",
+        "version": "2.1.0",
         "status": "online",
         "timestamp": datetime.now().isoformat(),
         "endpoints": {
